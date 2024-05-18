@@ -1,14 +1,15 @@
 document.getElementById('fileInput').addEventListener('change', handleFileUpload);
-document.getElementById('searchInput').addEventListener('input', handleSearch);
+document.getElementById('searchInput').addEventListener('input', debounce(handleSearch, 300));
 
 let elementsData = {};
 let displayedElements = {};
+const chunkSize = 1000; // Number of elements to process at a time
 
 async function handleFileUpload(event) {
     const file = event.target.files[0];
     if (file) {
         const reader = new FileReader();
-        reader.onload = async function(e) {
+        reader.onload = function(e) {
             try {
                 elementsData = JSON.parse(e.target.result);
                 displayedElements = elementsData;
@@ -27,15 +28,27 @@ async function handleFileUpload(event) {
 function displayElements() {
     const elementsContainer = document.getElementById('elementsContainer');
     elementsContainer.innerHTML = '';
+    let keys = Object.keys(displayedElements);
+    renderElementsChunk(keys, 0);
+}
 
-    Object.keys(displayedElements).forEach(key => {
+function renderElementsChunk(keys, start) {
+    const elementsContainer = document.getElementById('elementsContainer');
+    const end = Math.min(start + chunkSize, keys.length);
+
+    for (let i = start; i < end; i++) {
+        const key = keys[i];
         const element = displayedElements[key];
         const elementDiv = document.createElement('div');
         elementDiv.className = 'element';
         elementDiv.innerHTML = `<div>${element[0]}</div><div>${element[1]}</div>`;
         elementDiv.addEventListener('click', () => showGuide(key));
         elementsContainer.appendChild(elementDiv);
-    });
+    }
+
+    if (end < keys.length) {
+        setTimeout(() => renderElementsChunk(keys, end), 0);
+    }
 }
 
 function showGuide(elementKey) {
@@ -59,6 +72,14 @@ function handleSearch(event) {
         )
     );
     displayElements();
+}
+
+function debounce(func, wait) {
+    let timeout;
+    return function(...args) {
+        clearTimeout(timeout);
+        timeout = setTimeout(() => func.apply(this, args), wait);
+    };
 }
 
 // Load initial data if data.json exists
