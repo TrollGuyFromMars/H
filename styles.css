@@ -9,9 +9,16 @@ h1 {
     text-align: center;
 }
 
-#fileInput {
+#fileInput, #searchInput {
     display: block;
     margin: 20px auto;
+}
+
+#searchInput {
+    width: 80%;
+    padding: 10px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
 }
 
 #elementsContainer {
