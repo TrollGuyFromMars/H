@@ -54,27 +54,29 @@ function renderElementsChunk(keys, start) {
 function showGuide(elementKey) {
     const guideContainer = document.getElementById('guideContainer');
     guideContainer.innerHTML = '';
-    generateGuide(elementKey, guideContainer);
+    const steps = [];
+    gatherSteps(elementKey, steps);
+    steps.reverse();
+    steps.forEach((step, index) => {
+        const guideStep = document.createElement('div');
+        guideStep.className = 'guide-step';
+        guideStep.innerHTML = `<p>Step ${index + 1}: ${step}</p>`;
+        guideContainer.appendChild(guideStep);
+    });
     guideContainer.style.display = 'block';
 }
 
-function generateGuide(elementKey, container, step = 1) {
+function gatherSteps(elementKey, steps) {
     const element = elementsData[elementKey];
-    const guideStep = document.createElement('div');
-    guideStep.className = 'guide-step';
-
     if (element[2] === 1) {
-        guideStep.innerHTML = `<p>Step ${step}: ${element[1]} [Primary Element]</p>`;
+        return; // Skip primary elements
     } else {
         const subStep1 = element[3];
         const subStep2 = element[4];
-        guideStep.innerHTML = `<p>Step ${step}: ${elementsData[subStep1][1]} + ${elementsData[subStep2][1]} = ${element[1]}</p>`;
-        container.appendChild(guideStep);
-        generateGuide(subStep1, container, step + 1);
-        generateGuide(subStep2, container, step + 1);
+        steps.push(`${elementsData[subStep1][1]} + ${elementsData[subStep2][1]} = ${element[1]}`);
+        gatherSteps(subStep1, steps);
+        gatherSteps(subStep2, steps);
     }
-
-    container.appendChild(guideStep);
 }
 
 function handleSearch(event) {
