@@ -1,51 +1,48 @@
 body {
     font-family: Arial, sans-serif;
-    margin: 20px;
-    padding: 0;
-    background-color: #f9f9f9;
+    margin: 0;
+    padding: 20px;
+    background-color: #f0f0f0;
 }
 
 h1 {
     text-align: center;
 }
 
-#fileInput, #searchInput {
+input[type="file"], input[type="text"] {
     display: block;
     margin: 20px auto;
-}
-
-#searchInput {
-    width: 80%;
     padding: 10px;
-    border-radius: 5px;
-    border: 1px solid #ccc;
+    font-size: 16px;
 }
 
-#elementsContainer {
+#elementsContainer, #guideContainer {
+    margin: 20px auto;
+    width: 90%;
+    max-width: 800px;
+}
+
+.element, .guide-step {
+    border: 1px solid #ccc;
+    background-color: #fff;
+    padding: 10px;
+    margin-bottom: 10px;
+    border-radius: 5px;
     display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 10px;
-    max-height: 500px;
-    overflow-y: auto;
+    align-items: center;
+    justify-content: space-between;
 }
 
-.element {
-    display: inline-block;
-    padding: 10px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    background-color: #fff;
-    cursor: pointer;
-    text-align: center;
-    width: 100px;
+.element div, .guide-step p {
+    margin: 0;
+    padding: 0;
 }
 
-#guideContainer {
-    margin-top: 20px;
-    padding: 10px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    background-color: #fff;
-    display: none;
+.guide-step {
+    display: flex;
+    align-items: center;
+}
+
+.guide-step p {
+    flex: 1;
 }
