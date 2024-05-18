@@ -67,9 +67,9 @@ function showGuide(elementKey) {
 function handleSearch(event) {
     const query = event.target.value.toLowerCase();
     displayedElements = Object.fromEntries(
-        Object.entries(elementsData).filter(([key, value]) =>
-            value[1].toLowerCase().includes(query)
-        )
+        Object.entries(elementsData)
+            .filter(([key, value]) => value[1].toLowerCase().includes(query))
+            .sort((a, b) => a[1][1].localeCompare(b[1][1]))
     );
     displayElements();
 }
