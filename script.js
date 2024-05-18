@@ -28,7 +28,7 @@ async function handleFileUpload(event) {
 function displayElements() {
     const elementsContainer = document.getElementById('elementsContainer');
     elementsContainer.innerHTML = '';
-    let keys = Object.keys(displayedElements);
+    let keys = Object.keys(displayedElements).sort((a, b) => displayedElements[a][1].localeCompare(displayedElements[b][1]));
     renderElementsChunk(keys, 0);
 }
 
@@ -82,7 +82,6 @@ function handleSearch(event) {
     displayedElements = Object.fromEntries(
         Object.entries(elementsData)
             .filter(([key, value]) => value[1].toLowerCase().includes(query))
-            .sort((a, b) => a[1][1].localeCompare(b[1][1]))
     );
     displayElements();
 }
