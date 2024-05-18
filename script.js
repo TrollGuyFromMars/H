@@ -1,14 +1,24 @@
 document.getElementById('fileInput').addEventListener('change', handleFileUpload);
+document.getElementById('searchInput').addEventListener('input', handleSearch);
 
 let elementsData = {};
+let displayedElements = {};
 
-function handleFileUpload(event) {
+async function handleFileUpload(event) {
     const file = event.target.files[0];
     if (file) {
         const reader = new FileReader();
-        reader.onload = function(e) {
-            elementsData = JSON.parse(e.target.result);
-            displayElements();
+        reader.onload = async function(e) {
+            try {
+                elementsData = JSON.parse(e.target.result);
+                displayedElements = elementsData;
+                displayElements();
+            } catch (error) {
+                console.error('Error parsing JSON:', error);
+            }
+        };
+        reader.onerror = function(e) {
+            console.error('File reading error:', e);
         };
         reader.readAsText(file);
     }
@@ -18,8 +28,8 @@ function displayElements() {
     const elementsContainer = document.getElementById('elementsContainer');
     elementsContainer.innerHTML = '';
 
-    Object.keys(elementsData).forEach(key => {
-        const element = elementsData[key];
+    Object.keys(displayedElements).forEach(key => {
+        const element = displayedElements[key];
         const elementDiv = document.createElement('div');
         elementDiv.className = 'element';
         elementDiv.innerHTML = `<div>${element[0]}</div><div>${element[1]}</div>`;
@@ -41,11 +51,22 @@ function showGuide(elementKey) {
     guideContainer.style.display = 'block';
 }
 
+function handleSearch(event) {
+    const query = event.target.value.toLowerCase();
+    displayedElements = Object.fromEntries(
+        Object.entries(elementsData).filter(([key, value]) =>
+            value[1].toLowerCase().includes(query)
+        )
+    );
+    displayElements();
+}
+
 // Load initial data if data.json exists
 fetch('data.json')
     .then(response => response.json())
     .then(data => {
         elementsData = data;
+        displayedElements = data;
         displayElements();
     })
     .catch(error => console.error('Error loading initial data:', error));
