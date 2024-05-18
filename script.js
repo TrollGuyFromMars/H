@@ -53,15 +53,28 @@ function renderElementsChunk(keys, start) {
 
 function showGuide(elementKey) {
     const guideContainer = document.getElementById('guideContainer');
+    guideContainer.innerHTML = '';
+    generateGuide(elementKey, guideContainer);
+    guideContainer.style.display = 'block';
+}
+
+function generateGuide(elementKey, container, step = 1) {
     const element = elementsData[elementKey];
+    const guideStep = document.createElement('div');
+    guideStep.className = 'guide-step';
 
     if (element[2] === 1) {
-        guideContainer.innerHTML = `<h2>${element[1]}</h2><p>This is a primary element.</p>`;
+        guideStep.innerHTML = `<p>Step ${step}: ${element[1]} [Primary Element]</p>`;
     } else {
-        guideContainer.innerHTML = `<h2>${element[1]}</h2><p>Combination:</p><p>${elementsData[element[3]][1]} + ${elementsData[element[4]][1]}</p>`;
+        const subStep1 = element[3];
+        const subStep2 = element[4];
+        guideStep.innerHTML = `<p>Step ${step}: ${elementsData[subStep1][1]} + ${elementsData[subStep2][1]} = ${element[1]}</p>`;
+        container.appendChild(guideStep);
+        generateGuide(subStep1, container, step + 1);
+        generateGuide(subStep2, container, step + 1);
     }
 
-    guideContainer.style.display = 'block';
+    container.appendChild(guideStep);
 }
 
 function handleSearch(event) {
