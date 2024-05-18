@@ -73,7 +73,7 @@ function gatherSteps(elementKey, steps) {
     } else {
         const subStep1 = element[3];
         const subStep2 = element[4];
-        const stepDescription = `${elementsData[subStep1][1]} + ${elementsData[subStep2][1]} = ${element[1]}`;
+        const stepDescription = `${elementsData[subStep1][0]} ${elementsData[subStep1][1]} + ${elementsData[subStep2][0]} ${elementsData[subStep2][1]} = ${element[0]} ${element[1]}`;
         if (!steps.has(stepDescription)) {
             steps.set(stepDescription, stepDescription);
             gatherSteps(subStep1, steps);
@@ -108,3 +108,4 @@ fetch('data.json')
         displayElements();
     })
     .catch(error => console.error('Error loading initial data:', error));
+
