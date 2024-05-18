@@ -3,7 +3,7 @@ document.getElementById('searchInput').addEventListener('input', debounce(handle
 
 let elementsData = {};
 let displayedElements = {};
-const chunkSize = 500; // Number of elements to process at a time
+const chunkSize = 1000; // Number of elements to process at a time
 
 async function handleFileUpload(event) {
     const file = event.target.files[0];
@@ -54,10 +54,10 @@ function renderElementsChunk(keys, start) {
 function showGuide(elementKey) {
     const guideContainer = document.getElementById('guideContainer');
     guideContainer.innerHTML = '';
-    const steps = [];
+    const steps = new Map();
     gatherSteps(elementKey, steps);
-    steps.reverse();
-    steps.forEach((step, index) => {
+    const orderedSteps = Array.from(steps.values()).reverse();
+    orderedSteps.forEach((step, index) => {
         const guideStep = document.createElement('div');
         guideStep.className = 'guide-step';
         guideStep.innerHTML = `<p>Step ${index + 1}: ${step}</p>`;
@@ -73,9 +73,12 @@ function gatherSteps(elementKey, steps) {
     } else {
         const subStep1 = element[3];
         const subStep2 = element[4];
-        steps.push(`${elementsData[subStep1][1]} + ${elementsData[subStep2][1]} = ${element[1]}`);
-        gatherSteps(subStep1, steps);
-        gatherSteps(subStep2, steps);
+        const stepDescription = `${elementsData[subStep1][1]} + ${elementsData[subStep2][1]} = ${element[1]}`;
+        if (!steps.has(stepDescription)) {
+            steps.set(stepDescription, stepDescription);
+            gatherSteps(subStep1, steps);
+            gatherSteps(subStep2, steps);
+        }
     }
 }
 
