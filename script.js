@@ -114,6 +114,3 @@ fetch('https://raw.githubusercontent.com/TrollGuyFromMars/H/main/data.json')
         displayElements();
     })
     .catch(error => console.error('Error loading initial data:', error));
-
-    })
-    .catch(error => console.error('Error loading initial data:', error));
