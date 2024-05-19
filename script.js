@@ -3,7 +3,7 @@ document.getElementById('searchInput').addEventListener('input', debounce(handle
 
 let elementsData = {};
 let displayedElements = {};
-const chunkSize = 350; // Number of elements to process at a time
+const chunkSize = 1000; // Number of elements to process at a time
 
 async function handleFileUpload(event) {
     const file = event.target.files[0];
@@ -56,7 +56,6 @@ function showGuide(elementKey) {
     guideContainer.innerHTML = '';
     const steps = [];
     gatherSteps(elementKey, steps, new Set());
-    steps.reverse();
     steps.forEach((step, index) => {
         const guideStep = document.createElement('div');
         guideStep.className = 'guide-step';
@@ -81,7 +80,9 @@ function gatherSteps(elementKey, steps, seen) {
         if (elementsData[subStep2][2] !== 1) gatherSteps(subStep2, steps, seen);
 
         const stepDescription = `${elementsData[subStep1][0]} <a href="#" onclick="showGuide('${subStep1}')">${elementsData[subStep1][1]}</a> + ${elementsData[subStep2][0]} <a href="#" onclick="showGuide('${subStep2}')">${elementsData[subStep2][1]}</a> = ${element[0]} ${element[1]}`;
-        steps.push(stepDescription);
+        if (!steps.includes(stepDescription)) {
+            steps.push(stepDescription);
+        }
     }
 }
 
@@ -109,5 +110,8 @@ fetch('data.json')
         elementsData = data;
         displayedElements = data;
         displayElements();
+    })
+    .catch(error => console.error('Error loading initial data:', error));
+
     })
     .catch(error => console.error('Error loading initial data:', error));
