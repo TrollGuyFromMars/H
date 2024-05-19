@@ -1,5 +1,6 @@
 document.getElementById('fileInput').addEventListener('change', handleFileUpload);
 document.getElementById('searchInput').addEventListener('input', debounce(handleSearch, 300));
+document.getElementById('copyButton').addEventListener('click', copyGuideToClipboard);
 
 let elementsData = {};
 let displayedElements = {};
@@ -56,6 +57,7 @@ function showGuide(elementKey) {
     guideContainer.innerHTML = '';
     const steps = [];
     gatherSteps(elementKey, steps, new Set());
+    steps.reverse(); // Ensure the steps are in the correct order
     steps.forEach((step, index) => {
         const guideStep = document.createElement('div');
         guideStep.className = 'guide-step';
@@ -77,12 +79,12 @@ function gatherSteps(elementKey, steps, seen) {
         const subStep2 = element[4];
 
         if (!subStep1 || !subStep2 || !elementsData[subStep1] || !elementsData[subStep2]) return; // Check if subStep1 and subStep2 exist
-        if (elementsData[subStep1][2] !== 1) gatherSteps(subStep1, steps, seen); // Check if subStep1 exists
-        if (elementsData[subStep2][2] !== 1) gatherSteps(subStep2, steps, seen); // Check if subStep2 exists
+        gatherSteps(subStep1, steps, seen); // Collect steps recursively
+        gatherSteps(subStep2, steps, seen); // Collect steps recursively
 
         const stepDescription = `${elementsData[subStep1][0]} <a href="#" onclick="showGuide('${subStep1}')">${elementsData[subStep1][1]}</a> + ${elementsData[subStep2][0]} <a href="#" onclick="showGuide('${subStep2}')">${elementsData[subStep2][1]}</a> = ${element[0]} ${element[1]}`;
         if (!steps.includes(stepDescription)) {
-            steps.push(stepDescription);
+            steps.unshift(stepDescription); // Add the step to the beginning to ensure order
         }
     }
 }
@@ -95,6 +97,23 @@ function handleSearch(event) {
 
     displayedElements = Object.fromEntries(filteredElements);
     displayElements();
+}
+
+function copyGuideToClipboard() {
+    const guideContainer = document.getElementById('guideContainer');
+    const range = document.createRange();
+    range.selectNodeContents(guideContainer);
+    const selection = window.getSelection();
+    selection.removeAllRanges();
+    selection.addRange(range);
+
+    try {
+        document.execCommand('copy');
+        alert('Guide copied to clipboard!');
+    } catch (err) {
+        console.error('Failed to copy: ', err);
+    }
+    selection.removeAllRanges(); // Unselect the content after copying
 }
 
 function debounce(func, wait) {
