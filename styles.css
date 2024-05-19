@@ -1,8 +1,13 @@
-body {
-    font-family: Arial, sans-serif;
+#body {
     margin: 0;
     padding: 20px;
     background-color: #f0f0f0;
+    height:100%;
+    width:100%;
+}
+body{
+        font-family: Arial, sans-serif;
+        background-color: #f0f0f0;
 }
 
 h1 {
