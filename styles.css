@@ -49,6 +49,7 @@ input[type="file"], input[type="text"] {
 
 .guide-step {
     width: 100%;
+    box-sizing: border-box;
 }
 
 .guide-step p {
@@ -63,3 +64,4 @@ a {
 a:hover {
     text-decoration: underline;
 }
+
