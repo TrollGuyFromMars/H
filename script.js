@@ -3,6 +3,7 @@ document.getElementById('searchInput').addEventListener('input', debounce(handle
 
 let elementsData = {};
 let displayedElements = {};
+const chunkSize = 350; // Number of elements to process at a time
 
 async function handleFileUpload(event) {
     const file = event.target.files[0];
@@ -87,19 +88,18 @@ function gatherSteps(elementKey, steps, seen) {
 
 function handleSearch(event) {
     const query = event.target.value.toLowerCase();
-    const filteredElements = Object.fromEntries(
-        Object.entries(elementsData)
-            .filter(([key, value]) => value[1].toLowerCase().includes(query))
-            .sort((a, b) => {
-                const aStartsWithQuery = value[1].toLowerCase().startsWith(query);
-                const bStartsWithQuery = value[1].toLowerCase().startsWith(query);
+    const filteredElements = Object.entries(elementsData)
+        .filter(([key, value]) => value[1].toLowerCase().includes(query))
+        .sort(([keyA, valueA], [keyB, valueB]) => {
+            const startsWithA = valueA[1].toLowerCase().startsWith(query);
+            const startsWithB = valueB[1].toLowerCase().startsWith(query);
 
-                if (aStartsWithQuery && !bStartsWithQuery) return -1;
-                if (!aStartsWithQuery && bStartsWithQuery) return 1;
-                return value[1].localeCompare(b[1]);
-            })
-    );
-    displayedElements = filteredElements;
+            if (startsWithA && !startsWithB) return -1;
+            if (!startsWithA && startsWithB) return 1;
+            return valueA[1].localeCompare(valueB[1]);
+        });
+
+    displayedElements = Object.fromEntries(filteredElements);
     displayElements();
 }
 
@@ -118,5 +118,8 @@ fetch('data.json')
         elementsData = data;
         displayedElements = data;
         displayElements();
+    })
+    .catch(error => console.error('Error loading initial data:', error));
+
     })
     .catch(error => console.error('Error loading initial data:', error));
