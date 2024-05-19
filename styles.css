@@ -16,10 +16,24 @@ input[type="file"], input[type="text"] {
     font-size: 16px;
 }
 
-#elementsContainer, #guideContainer {
-    margin: 20px auto;
+.container {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    gap: 20px;
     width: 90%;
-    max-width: 800px;
+    max-width: 1200px;
+    margin: 20px auto;
+}
+
+#elementsContainer, #guideContainer {
+    flex: 1;
+    max-width: 50%;
+    background-color: #fff;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    padding: 10px;
+    box-sizing: border-box;
 }
 
 #elementsContainer {
@@ -38,17 +52,17 @@ input[type="file"], input[type="text"] {
     flex-direction: column;
     align-items: center;
     box-sizing: border-box;
-    overflow: hidden; /* Ensure content doesn't overflow the container */
+    overflow: hidden;
 }
 
 .element div, .guide-step p {
     margin: 0;
-    padding: 10px; /* Adjust padding to ensure content fits well */
+    padding: 10px;
     text-align: center;
-    word-wrap: break-word; /* Break long words */
-    overflow: hidden; /* Hide overflowing text */
-    text-overflow: ellipsis; /* Add ellipsis for overflowing text */
-    white-space: normal; /* Allow text to wrap to new lines */
+    word-wrap: break-word;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: normal;
 }
 
 a {
@@ -60,3 +74,18 @@ a:hover {
     text-decoration: underline;
 }
 
+#copyButton {
+    display: block;
+    margin: 20px auto;
+    padding: 10px 20px;
+    font-size: 16px;
+    cursor: pointer;
+    background-color: #007BFF;
+    color: white;
+    border: none;
+    border-radius: 5px;
+}
+
+#copyButton:hover {
+    background-color: #0056b3;
+}
