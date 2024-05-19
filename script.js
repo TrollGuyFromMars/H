@@ -66,7 +66,7 @@ function showGuide(elementKey) {
 }
 
 function gatherSteps(elementKey, steps, seen) {
-    if (seen.has(elementKey)) return;
+    if (seen.has(elementKey) || !elementsData[elementKey]) return; // Check if element exists
     seen.add(elementKey);
 
     const element = elementsData[elementKey];
@@ -76,8 +76,9 @@ function gatherSteps(elementKey, steps, seen) {
         const subStep1 = element[3];
         const subStep2 = element[4];
 
-        if (elementsData[subStep1][2] !== 1) gatherSteps(subStep1, steps, seen);
-        if (elementsData[subStep2][2] !== 1) gatherSteps(subStep2, steps, seen);
+        if (!subStep1 || !subStep2 || !elementsData[subStep1] || !elementsData[subStep2]) return; // Check if subStep1 and subStep2 exist
+        if (elementsData[subStep1][2] !== 1) gatherSteps(subStep1, steps, seen); // Check if subStep1 exists
+        if (elementsData[subStep2][2] !== 1) gatherSteps(subStep2, steps, seen); // Check if subStep2 exists
 
         const stepDescription = `${elementsData[subStep1][0]} <a href="#" onclick="showGuide('${subStep1}')">${elementsData[subStep1][1]}</a> + ${elementsData[subStep2][0]} <a href="#" onclick="showGuide('${subStep2}')">${elementsData[subStep2][1]}</a> = ${element[0]} ${element[1]}`;
         if (!steps.includes(stepDescription)) {
@@ -88,10 +89,11 @@ function gatherSteps(elementKey, steps, seen) {
 
 function handleSearch(event) {
     const query = event.target.value.toLowerCase();
-    displayedElements = Object.fromEntries(
-        Object.entries(elementsData)
-            .filter(([key, value]) => value[1].toLowerCase().includes(query))
-    );
+    const filteredElements = Object.entries(elementsData)
+        .filter(([key, value]) => value[1].toLowerCase().includes(query))
+        .sort(([keyA, valueA], [keyB, valueB]) => valueA[1].localeCompare(valueB[1])); // Sort alphabetically
+
+    displayedElements = Object.fromEntries(filteredElements);
     displayElements();
 }
 
@@ -104,11 +106,14 @@ function debounce(func, wait) {
 }
 
 // Load initial data if data.json exists
-fetch('data.json')
+fetch('https://raw.githubusercontent.com/TrollGuyFromMars/H/main/data.json')
     .then(response => response.json())
     .then(data => {
         elementsData = data;
         displayedElements = data;
         displayElements();
+    })
+    .catch(error => console.error('Error loading initial data:', error));
+
     })
     .catch(error => console.error('Error loading initial data:', error));
