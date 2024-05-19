@@ -3,7 +3,7 @@ document.getElementById('searchInput').addEventListener('input', debounce(handle
 
 let elementsData = {};
 let displayedElements = {};
-const chunkSize = 1000; // Number of elements to process at a time
+const chunkSize = 350; // Number of elements to process at a time
 
 async function handleFileUpload(event) {
     const file = event.target.files[0];
