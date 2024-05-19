@@ -3,7 +3,7 @@ document.getElementById('searchInput').addEventListener('input', debounce(handle
 
 let elementsData = {};
 let displayedElements = {};
-const chunkSize = 1000; // Number of elements to process at a time
+const chunkSize = 250; // Number of elements to process at a time
 
 async function handleFileUpload(event) {
     const file = event.target.files[0];
@@ -73,7 +73,7 @@ function gatherSteps(elementKey, steps) {
     } else {
         const subStep1 = element[3];
         const subStep2 = element[4];
-        const stepDescription = `${elementsData[subStep1][0]} ${elementsData[subStep1][1]} + ${elementsData[subStep2][0]} ${elementsData[subStep2][1]} = ${element[0]} ${element[1]}`;
+        const stepDescription = `${elementsData[subStep1][0]} <a href="#" onclick="showGuide('${subStep1}')">${elementsData[subStep1][1]}</a> + ${elementsData[subStep2][0]} <a href="#" onclick="showGuide('${subStep2}')">${elementsData[subStep2][1]}</a> = ${element[0]} ${element[1]}`;
         if (!steps.has(stepDescription)) {
             steps.set(stepDescription, stepDescription);
             gatherSteps(subStep1, steps);
@@ -108,4 +108,3 @@ fetch('data.json')
         displayElements();
     })
     .catch(error => console.error('Error loading initial data:', error));
-
