@@ -3,7 +3,7 @@ document.getElementById('searchInput').addEventListener('input', debounce(handle
 
 let elementsData = {};
 let displayedElements = {};
-const chunkSize = 350; // Number of elements to process at a time
+const chunkSize = 1000; // Number of elements to process at a time
 
 async function handleFileUpload(event) {
     const file = event.target.files[0];
@@ -92,12 +92,12 @@ function handleSearch(event) {
         Object.entries(elementsData)
             .filter(([key, value]) => value[1].toLowerCase().includes(query))
             .sort((a, b) => {
-                const aStartsWithQuery = value[1].toLowerCase().startsWith(query);
-                const bStartsWithQuery = value[1].toLowerCase().startsWith(query);
+                const aStartsWithQuery = displayedElements[a][1].toLowerCase().startsWith(query);
+                const bStartsWithQuery = displayedElements[b][1].toLowerCase().startsWith(query);
 
                 if (aStartsWithQuery && !bStartsWithQuery) return -1;
                 if (!aStartsWithQuery && bStartsWithQuery) return 1;
-                return value[1].localeCompare(b[1]);
+                return displayedElements[a][1].localeCompare(displayedElements[b][1]);
             })
     );
     displayElements();
@@ -118,5 +118,8 @@ fetch('data.json')
         elementsData = data;
         displayedElements = data;
         displayElements();
+    })
+    .catch(error => console.error('Error loading initial data:', error));
+
     })
     .catch(error => console.error('Error loading initial data:', error));
