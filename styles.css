@@ -32,7 +32,6 @@ input[type="file"], input[type="text"] {
 .element, .guide-step {
     border: 1px solid #ccc;
     background-color: #fff;
-    padding: 10px;
     margin-bottom: 10px;
     border-radius: 5px;
     display: flex;
@@ -40,20 +39,17 @@ input[type="file"], input[type="text"] {
     align-items: center;
     width: calc(25% - 20px);
     box-sizing: border-box;
+    overflow: hidden; /* Ensure content doesn't overflow the container */
 }
 
 .element div, .guide-step p {
     margin: 0;
-    padding: 0;
-}
-
-.guide-step {
-    width: 100%;
-    box-sizing: border-box;
-}
-
-.guide-step p {
-    width: 100%;
+    padding: 10px; /* Adjust padding to ensure content fits well */
+    text-align: center;
+    word-wrap: break-word; /* Break long words */
+    overflow: hidden; /* Hide overflowing text */
+    text-overflow: ellipsis; /* Add ellipsis for overflowing text */
+    white-space: normal; /* Allow text to wrap to new lines */
 }
 
 a {
