@@ -3,7 +3,7 @@ document.getElementById('searchInput').addEventListener('input', debounce(handle
 
 let elementsData = {};
 let displayedElements = {};
-const chunkSize = 250; // Number of elements to process at a time
+const chunkSize = 350; // Number of elements to process at a time
 
 async function handleFileUpload(event) {
     const file = event.target.files[0];
@@ -54,10 +54,10 @@ function renderElementsChunk(keys, start) {
 function showGuide(elementKey) {
     const guideContainer = document.getElementById('guideContainer');
     guideContainer.innerHTML = '';
-    const steps = new Map();
-    gatherSteps(elementKey, steps);
-    const orderedSteps = Array.from(steps.values()).reverse();
-    orderedSteps.forEach((step, index) => {
+    const steps = [];
+    gatherSteps(elementKey, steps, new Set());
+    steps.reverse();
+    steps.forEach((step, index) => {
         const guideStep = document.createElement('div');
         guideStep.className = 'guide-step';
         guideStep.innerHTML = `<p>Step ${index + 1}: ${step}</p>`;
@@ -66,19 +66,22 @@ function showGuide(elementKey) {
     guideContainer.style.display = 'block';
 }
 
-function gatherSteps(elementKey, steps) {
+function gatherSteps(elementKey, steps, seen) {
+    if (seen.has(elementKey)) return;
+    seen.add(elementKey);
+
     const element = elementsData[elementKey];
     if (element[2] === 1) {
         return; // Skip primary elements
     } else {
         const subStep1 = element[3];
         const subStep2 = element[4];
+
+        if (elementsData[subStep1][2] !== 1) gatherSteps(subStep1, steps, seen);
+        if (elementsData[subStep2][2] !== 1) gatherSteps(subStep2, steps, seen);
+
         const stepDescription = `${elementsData[subStep1][0]} <a href="#" onclick="showGuide('${subStep1}')">${elementsData[subStep1][1]}</a> + ${elementsData[subStep2][0]} <a href="#" onclick="showGuide('${subStep2}')">${elementsData[subStep2][1]}</a> = ${element[0]} ${element[1]}`;
-        if (!steps.has(stepDescription)) {
-            steps.set(stepDescription, stepDescription);
-            gatherSteps(subStep1, steps);
-            gatherSteps(subStep2, steps);
-        }
+        steps.push(stepDescription);
     }
 }
 
