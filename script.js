@@ -57,7 +57,6 @@ function showGuide(elementKey) {
     guideContainer.innerHTML = '';
     const steps = [];
     gatherSteps(elementKey, steps, new Set());
-    steps.reverse(); // Ensure the steps are in the correct order
     steps.forEach((step, index) => {
         const guideStep = document.createElement('div');
         guideStep.className = 'guide-step';
@@ -84,7 +83,7 @@ function gatherSteps(elementKey, steps, seen) {
 
         const stepDescription = `${elementsData[subStep1][0]} <a href="#" onclick="showGuide('${subStep1}')">${elementsData[subStep1][1]}</a> + ${elementsData[subStep2][0]} <a href="#" onclick="showGuide('${subStep2}')">${elementsData[subStep2][1]}</a> = ${element[0]} ${element[1]}`;
         if (!steps.includes(stepDescription)) {
-            steps.unshift(stepDescription); // Add the step to the beginning to ensure order
+            steps.push(stepDescription); // Add the step to the end to ensure order
         }
     }
 }
@@ -92,7 +91,7 @@ function gatherSteps(elementKey, steps, seen) {
 function handleSearch(event) {
     const query = event.target.value.toLowerCase();
     const filteredElements = Object.entries(elementsData)
-        .filter(([key, value]) => value[1].toLowerCase().includes(query))
+        .filter(([key, value]) => value[1].toLowerCase().startsWith(query)) // Match elements starting with query
         .sort(([keyA, valueA], [keyB, valueB]) => valueA[1].localeCompare(valueB[1])); // Sort alphabetically
 
     displayedElements = Object.fromEntries(filteredElements);
@@ -133,3 +132,4 @@ fetch('https://raw.githubusercontent.com/TrollGuyFromMars/H/main/data.json')
         displayElements();
     })
     .catch(error => console.error('Error loading initial data:', error));
+
